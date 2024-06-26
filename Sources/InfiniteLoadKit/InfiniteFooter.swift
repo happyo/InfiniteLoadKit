@@ -20,5 +20,9 @@ public struct InfiniteFooter<Label>: View where Label : View {
         VStack {
             label()
         }
+        .frame(maxWidth: .infinity)
+        .anchorPreference(key: InfiniteFooterAnchorKey.self, value: .bounds, transform: { anchor in
+            [.init(bounds: anchor, preloadOffset: 50, refreshing: self.isLoading)]
+        })
     }
 }

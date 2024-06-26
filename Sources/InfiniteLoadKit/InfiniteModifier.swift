@@ -33,6 +33,7 @@ struct InfiniteLoadModifier: ViewModifier {
 
                     }
                 }
+                .id(self.id)
         }
     }
 

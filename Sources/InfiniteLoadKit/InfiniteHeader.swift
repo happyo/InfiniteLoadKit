@@ -20,5 +20,9 @@ public struct InfiniteHeader<Label>: View where Label : View {
         VStack {
             label(0)
         }
+        .frame(maxWidth: .infinity)
+        .anchorPreference(key: InfiniteHeaderAnchorKey.self, value: .bounds, transform: { anchor in
+            [.init(bounds: anchor, refreshing: self.isLoading)]
+        })
     }
 }

@@ -18,7 +18,7 @@ struct InfiniteHeaderAnchorKey: PreferenceKey {
 }
 
 struct InfiniteHeaderUpdateKey: EnvironmentKey {
-    static var defaultValue: InfiniteHeaderUpdateValueModel = .init(enable: false)
+    static var defaultValue: InfiniteHeaderUpdateValueModel = .init(enable: true)
 }
 
 extension EnvironmentValues {
