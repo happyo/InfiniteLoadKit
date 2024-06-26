@@ -12,7 +12,7 @@ struct InfiniteHeaderAnchorKey: PreferenceKey {
         let refreshing: Bool
     }
 
-    static func reduce(value: inout Value, nextValue: () -> Value) {
+    static func reduce(value: inout [Item], nextValue: () -> [Item]) {
         value.append(contentsOf: nextValue())
     }
 }
