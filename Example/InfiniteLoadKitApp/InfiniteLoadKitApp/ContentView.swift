@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var isAtBottom = false
     @State private var headerLoading = false
     @State private var footerLoading = false
-    @State private var scrollPosition: Int? = nil
+    @State private var scrollPosition: Int? = 10
     @State private var noMorePre: Bool = false
     @State private var noMoreNext: Bool = false
 
@@ -32,7 +32,7 @@ struct ContentView: View {
                     } noMoreLabel: {
                         Text("NoMore").frame(height: 30)
                     }
-                    .preload(offset: 100)
+                    .preload(offset: 300)
                     .noMore(noMorePre)
 
                     ForEach(dataList, id: \.self) { index in
@@ -48,12 +48,12 @@ struct ContentView: View {
                     } noMoreLabel: {
                         Text("NoMore").frame(height: 30)
                     }
-                    .preload(offset: 100)
+                    .preload(offset: 300)
                     .noMore(noMoreNext)
 
                 }
             }
-            .enableInfiniteLoading()
+            .enableInfiniteLoading(minTriggerInterval: 0.3)
             .onChange(of: dataList) { _, _ in
                 if let position = self.scrollPosition {
                     DispatchQueue.main.async {
@@ -73,8 +73,7 @@ struct ContentView: View {
 
         isLoadingData = true
         let item = DispatchWorkItem {
-            self.isLoadingData = false
-            self.headerLoading = false
+            
             
             if let f = self.dataList.first {
                 if f < -100 {
@@ -83,6 +82,10 @@ struct ContentView: View {
                 scrollPosition = f
                 let preList = Array(f-20..<f)
                 self.dataList.insert(contentsOf: preList, at: 0)
+                
+                self.isLoadingData = false
+                self.headerLoading = false
+                print("end pre action")
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: item)

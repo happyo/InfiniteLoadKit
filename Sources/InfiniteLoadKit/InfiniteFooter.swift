@@ -32,7 +32,11 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label : View, NoMor
         }
         .frame(maxWidth: .infinity)
         .anchorPreference(key: InfiniteFooterAnchorKey.self, value: .bounds, transform: { anchor in
-            [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
+            if isLoading {
+                []
+            } else {
+                [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
+            }
         })
         .onChange(of: update) { _ in
             if update.shouldLoading, !isLoading, !noMore, InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {

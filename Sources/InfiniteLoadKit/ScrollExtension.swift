@@ -5,7 +5,7 @@
 import SwiftUI
 
 extension ScrollView {
-    public func enableInfiniteLoading(_ enable: Bool = true) -> some View {
-        modifier(InfiniteLoadModifier(enable: enable))
+    public func enableInfiniteLoading(enable: Bool = true, minTriggerInterval: TimeInterval = 0.3) -> some View {
+        modifier(InfiniteLoadModifier(enable: enable, minTriggerInterval: minTriggerInterval))
     }
 }

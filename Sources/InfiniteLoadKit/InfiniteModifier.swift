@@ -14,7 +14,7 @@ struct InfiniteLoadModifier: ViewModifier {
     @State private var isHeaderLoading: Bool = false
     @State private var isFooterLoading: Bool = false
 
-    init(enable: Bool, minTriggerInterval: TimeInterval = 0.5) {
+    init(enable: Bool, minTriggerInterval: TimeInterval = 0.3) {
         self.isEnable = enable
         self.minTriggerInterval = minTriggerInterval
         self._headerUpdate = State(initialValue: .init(enable: enable))
@@ -50,9 +50,9 @@ struct InfiniteLoadModifier: ViewModifier {
         
         var update = headerUpdate
         
-        update.shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
+        let shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
         
-        if update.shouldLoading == headerUpdate.shouldLoading {
+        if update.shouldLoading == shouldLoading {
             if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
                 update.lastTriggerDate = Date()
                 
@@ -61,6 +61,7 @@ struct InfiniteLoadModifier: ViewModifier {
                 return
             }
         } else {
+            update.shouldLoading = shouldLoading
             headerUpdate = update
         }
         
@@ -79,9 +80,9 @@ struct InfiniteLoadModifier: ViewModifier {
         
         var update = footerUpdate
         
-        update.shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
+        let shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
         
-        if update.shouldLoading == footerUpdate.shouldLoading {
+        if update.shouldLoading == shouldLoading {
             if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
                 update.lastTriggerDate = Date()
                 
@@ -90,6 +91,7 @@ struct InfiniteLoadModifier: ViewModifier {
                 return
             }
         } else {
+            update.shouldLoading = shouldLoading
             footerUpdate = update
         }
     }
