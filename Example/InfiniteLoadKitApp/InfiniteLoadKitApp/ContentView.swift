@@ -17,6 +17,8 @@ struct ContentView: View {
     @State private var noMorePre: Bool = false
     @State private var noMoreNext: Bool = false
 
+    @State private var isLoadingData: Bool = false
+    
     @State private var dataList: [Int] = Array(1...20)
 
     var body: some View {
@@ -36,6 +38,7 @@ struct ContentView: View {
                     ForEach(dataList, id: \.self) { index in
                         Text("Item \(index)")
                             .padding()
+                            .id(index)
                     }
                     
                     InfiniteFooter(isLoading: $footerLoading) {
@@ -59,19 +62,28 @@ struct ContentView: View {
                     }
                 }
             }
+            .onAppear {
+                print("scroll on a")
+            }
         }
     }
     
     private func loadPre() {
+        if isLoadingData {
+            return
+        }
         print("pre action")
-        
+
+        isLoadingData = true
         let item = DispatchWorkItem {
+            self.isLoadingData = false
             self.headerLoading = false
             
             if let f = self.dataList.first {
                 if f < -100 {
                     noMorePre = true
                 }
+                scrollPosition = f
                 let preList = Array(f-20..<f)
                 self.dataList.insert(contentsOf: preList, at: 0)
             }
@@ -88,6 +100,7 @@ struct ContentView: View {
                 if last >= 100 {
                     noMoreNext = true
                 }
+                scrollPosition = nil
                 let nextList = Array(last+1...last+20)
                 self.dataList.append(contentsOf: nextList)
             }

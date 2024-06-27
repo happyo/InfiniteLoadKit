@@ -35,7 +35,7 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label : View, NoMor
             [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
         })
         .onChange(of: update) { _ in
-            if update.shouldLoading, !isLoading, !noMore {
+            if update.shouldLoading, !isLoading, !noMore, InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
                 isLoading = true
                 DispatchQueue.main.async {
                     self.action()

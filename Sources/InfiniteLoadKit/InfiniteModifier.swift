@@ -20,6 +20,8 @@ struct InfiniteLoadModifier: ViewModifier {
         self.minTriggerInterval = minTriggerInterval
         self._headerUpdate = State(initialValue: .init(enable: enable))
         self._footerUpdate = State(initialValue: .init(enable: enable))
+
+        InfiniteHelper.shared.minTriggerInterval = minTriggerInterval
     }
 
     func body(content: Content) -> some View {
@@ -52,11 +54,18 @@ struct InfiniteLoadModifier: ViewModifier {
         
         update.shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
         
-        if update.shouldLoading == headerUpdate.shouldLoading, canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
-            update.lastTriggerDate = Date()
+        if update.shouldLoading == headerUpdate.shouldLoading {
+            if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
+                update.lastTriggerDate = Date()
+                
+                headerUpdate = update
+            } else {
+                return
+            }
+        } else {
+            headerUpdate = update
         }
         
-        headerUpdate = update
     }
 
     func updateFooter(proxy: GeometryProxy, value: InfiniteFooterAnchorKey.Value) {
@@ -74,14 +83,17 @@ struct InfiniteLoadModifier: ViewModifier {
         
         update.shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
         
-        if update.shouldLoading == footerUpdate.shouldLoading, canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
-            update.lastTriggerDate = Date()
+        if update.shouldLoading == footerUpdate.shouldLoading {
+            if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
+                update.lastTriggerDate = Date()
+                
+                footerUpdate = update
+            } else {
+                return
+            }
+        } else {
+            footerUpdate = update
         }
-        
-        footerUpdate = update
     }
     
-    func canTriggerRefresh(lastTriggerDate: Date) -> Bool {
-        return Date().timeIntervalSince(lastTriggerDate) >= minTriggerInterval
-    }
 }
