@@ -62,9 +62,6 @@ struct ContentView: View {
                     }
                 }
             }
-            .onAppear {
-                print("scroll on a")
-            }
         }
     }
     

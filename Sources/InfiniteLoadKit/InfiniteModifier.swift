@@ -8,7 +8,6 @@ struct InfiniteLoadModifier: ViewModifier {
     let isEnable: Bool
     let minTriggerInterval: TimeInterval
 
-    @State private var id: Int = 0
     @State private var headerUpdate: InfiniteHeaderUpdateKey.Value
     @State private var footerUpdate: InfiniteFooterUpdateKey.Value
     
@@ -35,7 +34,6 @@ struct InfiniteLoadModifier: ViewModifier {
                 .onPreferenceChange(InfiniteFooterAnchorKey.self, perform: { value in
                     self.updateFooter(proxy: proxy, value: value)
                 })
-                .id(self.id)
         }
     }
 
