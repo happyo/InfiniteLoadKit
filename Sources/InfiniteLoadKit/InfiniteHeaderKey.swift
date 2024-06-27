@@ -7,9 +7,10 @@ import SwiftUI
 struct InfiniteHeaderAnchorKey: PreferenceKey {
     static var defaultValue: [Item] = []
     
-    struct Item {
+    struct Item: Equatable {
+        let preloadOffset: CGFloat
         let bounds: Anchor<CGRect>
-        let refreshing: Bool
+        let isLoading: Bool
     }
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
@@ -28,8 +29,8 @@ extension EnvironmentValues {
     }
 }
 
-public struct InfiniteHeaderUpdateValueModel {
+public struct InfiniteHeaderUpdateValueModel: Equatable {
     let enable: Bool
-    var progress: CGFloat = 0
-    var refresh: Bool = false
+    var shouldLoading: Bool = false
+    var lastTriggerDate: Date = Date.distantPast
 }

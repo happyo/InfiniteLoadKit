@@ -7,10 +7,10 @@ import SwiftUI
 struct InfiniteFooterAnchorKey: PreferenceKey {
     static var defaultValue: [Item] = []
     
-    struct Item {
+    struct Item:Equatable {
         let bounds: Anchor<CGRect>
         let preloadOffset: CGFloat
-        let refreshing: Bool
+        let isLoading: Bool
     }
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
@@ -29,7 +29,8 @@ extension EnvironmentValues {
     }
 }
 
-public struct InfiniteFooterUpdateValueModel {
+public struct InfiniteFooterUpdateValueModel: Equatable {
     let enable: Bool
-    var refresh: Bool = false
+    var shouldLoading: Bool = false
+    var lastTriggerDate: Date = Date.distantPast
 }
