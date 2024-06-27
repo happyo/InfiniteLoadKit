@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var headerLoading = false
     @State private var footerLoading = false
     @State private var scrollPosition: Int? = nil
+    @State private var noMorePre: Bool = false
+    @State private var noMoreNext: Bool = false
 
     @State private var dataList: [Int] = Array(1...20)
 
@@ -25,8 +27,11 @@ struct ContentView: View {
                         loadPre()
                     } label: {
                         ProgressView().frame(height: 100)
+                    } noMoreLabel: {
+                        Text("NoMore").frame(height: 30)
                     }
                     .preload(offset: 100)
+                    .noMore(noMorePre)
 
                     ForEach(dataList, id: \.self) { index in
                         Text("Item \(index)")
@@ -37,8 +42,11 @@ struct ContentView: View {
                         loadMore()
                     } label: {
                         ProgressView().frame(height: 100)
+                    } noMoreLabel: {
+                        Text("NoMore").frame(height: 30)
                     }
                     .preload(offset: 100)
+                    .noMore(noMoreNext)
 
                 }
             }
@@ -61,6 +69,9 @@ struct ContentView: View {
             self.headerLoading = false
             
             if let f = self.dataList.first {
+                if f < -100 {
+                    noMorePre = true
+                }
                 let preList = Array(f-20..<f)
                 self.dataList.insert(contentsOf: preList, at: 0)
             }
@@ -74,6 +85,9 @@ struct ContentView: View {
             self.footerLoading = false
             
             if let last = self.dataList.last {
+                if last >= 100 {
+                    noMoreNext = true
+                }
                 let nextList = Array(last+1...last+20)
                 self.dataList.append(contentsOf: nextList)
             }

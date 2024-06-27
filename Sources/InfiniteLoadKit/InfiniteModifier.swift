@@ -15,7 +15,7 @@ struct InfiniteLoadModifier: ViewModifier {
     @State private var isHeaderLoading: Bool = false
     @State private var isFooterLoading: Bool = false
 
-    init(enable: Bool, minTriggerInterval: TimeInterval = 0.1) {
+    init(enable: Bool, minTriggerInterval: TimeInterval = 0.5) {
         self.isEnable = enable
         self.minTriggerInterval = minTriggerInterval
         self._headerUpdate = State(initialValue: .init(enable: enable))
@@ -41,18 +41,20 @@ struct InfiniteLoadModifier: ViewModifier {
         guard let item = value.first else { return }
         guard isEnable else { return }
         guard !isFooterLoading else { return }
-        
+
         isHeaderLoading = item.isLoading
+        
+        guard !isHeaderLoading else { return }
 
         let bounds = proxy[item.bounds]
         
         var update = headerUpdate
         
-        if canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
+        update.shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
+        
+        if update.shouldLoading == headerUpdate.shouldLoading, canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
             update.lastTriggerDate = Date()
         }
-        
-        update.shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
         
         headerUpdate = update
     }
@@ -61,18 +63,20 @@ struct InfiniteLoadModifier: ViewModifier {
         guard let item = value.first else { return }
         guard isEnable else { return }
         guard !isHeaderLoading else { return }
-
+        
         isFooterLoading = item.isLoading
+
+        guard !isFooterLoading else { return }
 
         let bounds = proxy[item.bounds]
         
         var update = footerUpdate
         
-        if canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
+        update.shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
+        
+        if update.shouldLoading == footerUpdate.shouldLoading, canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
             update.lastTriggerDate = Date()
         }
-        
-        update.shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
         
         footerUpdate = update
     }

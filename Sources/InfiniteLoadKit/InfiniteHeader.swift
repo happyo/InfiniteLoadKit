@@ -4,17 +4,19 @@
 
 import SwiftUI
 
-public struct InfiniteHeader<Label>: View where Label : View {
+public struct InfiniteHeader<Label, NoMoreLabel>: View where Label : View, NoMoreLabel: View {
     let action: () -> Void
     let label: () -> Label
+    let noMoreLabel: () -> NoMoreLabel
     @Binding var isLoading: Bool
     @Environment(\.infiniteHeaderUpdate) var update
     private var preloadOffset: CGFloat = 0
     private var noMore: Bool = false
 
-    public init(isLoading: Binding<Bool>, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+    public init(isLoading: Binding<Bool>, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label, @ViewBuilder noMoreLabel: @escaping () -> NoMoreLabel) {
         self.action = action
         self.label = label
+        self.noMoreLabel = noMoreLabel
         self._isLoading = isLoading
     }
     
@@ -22,16 +24,18 @@ public struct InfiniteHeader<Label>: View where Label : View {
         VStack {
             if isLoading {
                 label()
+            } else if noMore {
+                noMoreLabel()
             } else {
                 EmptyView()
             }
         }
         .frame(maxWidth: .infinity)
         .anchorPreference(key: InfiniteHeaderAnchorKey.self, value: .bounds, transform: { anchor in
-            [.init(preloadOffset: self.preloadOffset, bounds: anchor, isLoading: self.isLoading)]
+            [.init(preloadOffset: preloadOffset, bounds: anchor, isLoading: isLoading)]
         })
         .onChange(of: update) { _ in
-            if update.shouldLoading, !isLoading {
+            if update.shouldLoading, !isLoading, !noMore {
                 isLoading = true
                 DispatchQueue.main.async {
                     self.action()
