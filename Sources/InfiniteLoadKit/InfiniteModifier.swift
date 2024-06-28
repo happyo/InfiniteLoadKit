@@ -19,8 +19,6 @@ struct InfiniteLoadModifier: ViewModifier {
         self.minTriggerInterval = minTriggerInterval
         self._headerUpdate = State(initialValue: .init(enable: enable))
         self._footerUpdate = State(initialValue: .init(enable: enable))
-
-        InfiniteHelper.shared.minTriggerInterval = minTriggerInterval
     }
 
     func body(content: Content) -> some View {

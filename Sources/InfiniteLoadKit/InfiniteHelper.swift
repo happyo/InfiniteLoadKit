@@ -5,13 +5,7 @@
 import SwiftUI
 
 class InfiniteHelper {
-    var minTriggerInterval: TimeInterval = 0.5
-
-    public static let shared = InfiniteHelper()
-
-    private init() {}
-    
-    func canTriggerRefresh(lastTriggerDate: Date) -> Bool {
+    static func canTriggerRefresh(lastTriggerDate: Date, minTriggerInterval: TimeInterval) -> Bool {
         let interval = Date().timeIntervalSince(lastTriggerDate)
         
         return interval >= minTriggerInterval
