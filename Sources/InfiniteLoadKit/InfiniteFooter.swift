@@ -27,19 +27,15 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label : View, NoMor
             } else if noMore {
                 noMoreLabel()
             } else {
-                EmptyView()
+                Color.clear.frame(height: 1)
             }
         }
         .frame(maxWidth: .infinity)
         .anchorPreference(key: InfiniteFooterAnchorKey.self, value: .bounds, transform: { anchor in
-            if isLoading {
-                []
-            } else {
-                [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
-            }
+            [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
         })
         .onChange(of: update) { _ in
-            if update.shouldLoading, !isLoading, !noMore, InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
+            if update.shouldLoading, !isLoading, !noMore {
                 isLoading = true
                 DispatchQueue.main.async {
                     self.action()

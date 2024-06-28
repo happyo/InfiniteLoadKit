@@ -46,25 +46,14 @@ struct InfiniteLoadModifier: ViewModifier {
         
         guard !isHeaderLoading else { return }
 
-        let bounds = proxy[item.bounds]
-        
         var update = headerUpdate
-        
+
+        let bounds = proxy[item.bounds]
+                
         let shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
         
-        if update.shouldLoading == shouldLoading {
-            if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
-                update.lastTriggerDate = Date()
-                
-                headerUpdate = update
-            } else {
-                return
-            }
-        } else {
-            update.shouldLoading = shouldLoading
-            headerUpdate = update
-        }
-        
+        update.shouldLoading = shouldLoading
+        headerUpdate = update
     }
 
     func updateFooter(proxy: GeometryProxy, value: InfiniteFooterAnchorKey.Value) {
@@ -82,18 +71,8 @@ struct InfiniteLoadModifier: ViewModifier {
         
         let shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
         
-        if update.shouldLoading == shouldLoading {
-            if InfiniteHelper.shared.canTriggerRefresh(lastTriggerDate: update.lastTriggerDate) {
-                update.lastTriggerDate = Date()
-                
-                footerUpdate = update
-            } else {
-                return
-            }
-        } else {
-            update.shouldLoading = shouldLoading
-            footerUpdate = update
-        }
+        update.shouldLoading = shouldLoading
+        footerUpdate = update
     }
     
 }

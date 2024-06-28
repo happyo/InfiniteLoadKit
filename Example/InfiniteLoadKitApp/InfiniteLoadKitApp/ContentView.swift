@@ -54,7 +54,7 @@ struct ContentView: View {
                 }
             }
             .enableInfiniteLoading(minTriggerInterval: 0.3)
-            .onChange(of: dataList) { _, _ in
+            .onChange(of: scrollPosition) { _, _ in
                 if let position = self.scrollPosition {
                     DispatchQueue.main.async {
                         scrollView.scrollTo(position, anchor: .top)

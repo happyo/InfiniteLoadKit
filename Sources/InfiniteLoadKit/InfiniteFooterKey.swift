@@ -32,5 +32,4 @@ extension EnvironmentValues {
 public struct InfiniteFooterUpdateValueModel: Equatable {
     let enable: Bool
     var shouldLoading: Bool = false
-    var lastTriggerDate: Date = Date.distantPast
 }
