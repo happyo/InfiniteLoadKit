@@ -14,6 +14,8 @@ struct InfiniteLoadModifier: ViewModifier {
     @State private var isHeaderLoading: Bool = false
     @State private var isFooterLoading: Bool = false
 
+    @State private var loadAttempts = 0 // 添加加载尝试次数计数器
+
     init(enable: Bool, minTriggerInterval: TimeInterval = 0.3) {
         self.isEnable = enable
         self.minTriggerInterval = minTriggerInterval
@@ -47,8 +49,29 @@ struct InfiniteLoadModifier: ViewModifier {
         var update = headerUpdate
 
         let bounds = proxy[item.bounds]
-                
-        let shouldLoading = bounds.minY >= -(item.preloadOffset + bounds.height)
+       
+        let minY = bounds.minY
+        
+        var shouldLoading = true
+        
+        print(minY)
+        
+        if minY > 0 {
+            shouldLoading = false
+            loadAttempts = 10
+        } else {
+            shouldLoading = bounds.minY >= -item.preloadOffset
+            
+            if shouldLoading {
+                loadAttempts += 1
+                if loadAttempts > 9 {
+                    shouldLoading = false
+                    loadAttempts = 0
+                }
+            } else {
+                loadAttempts = 10
+            }
+        }
         
         update.shouldLoading = shouldLoading
         headerUpdate = update

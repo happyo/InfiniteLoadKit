@@ -58,8 +58,10 @@ struct ContentView: View {
                 if let position = self.scrollPosition {
                     DispatchQueue.main.async {
                         scrollView.scrollTo(position, anchor: .top)
+                        print(position)
                         self.scrollPosition = nil
                     }
+
                 }
             }
         }
@@ -79,13 +81,16 @@ struct ContentView: View {
                 if f < -100 {
                     noMorePre = true
                 }
-                scrollPosition = f
                 let preList = Array(f-20..<f)
                 self.dataList.insert(contentsOf: preList, at: 0)
                 
                 self.isLoadingData = false
                 self.headerLoading = false
                 print("end pre action")
+                DispatchQueue.main.async {
+                    scrollPosition = f
+                }
+
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: item)
