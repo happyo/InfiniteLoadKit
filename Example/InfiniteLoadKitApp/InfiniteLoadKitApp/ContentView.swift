@@ -120,7 +120,7 @@ struct ContentView: View {
 
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: item)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: item)
     }
     
     private func loadMore() {

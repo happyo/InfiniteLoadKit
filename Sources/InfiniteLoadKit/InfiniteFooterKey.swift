@@ -15,6 +15,7 @@ struct InfiniteFooterAnchorKey: PreferenceKey {
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
         value.append(contentsOf: nextValue())
+        print(value)
     }
 }
 
@@ -25,7 +26,9 @@ struct InfiniteFooterUpdateKey: EnvironmentKey {
 extension EnvironmentValues {
     var infiniteFooterUpdate: InfiniteFooterUpdateValueModel {
         get { self[InfiniteFooterUpdateKey.self] }
-        set { self[InfiniteFooterUpdateKey.self] = newValue }
+        set {
+            self[InfiniteFooterUpdateKey.self] = newValue
+        }
     }
 }
 
