@@ -60,7 +60,7 @@ struct InfiniteLoadModifier: ViewModifier {
         print(minY)
         
         if minY > 0 {
-            shouldLoading = false
+            update.changeTrigger += 1
             headerLoadAttempts = minTriggerCount
         } else {
             shouldLoading = bounds.minY >= -item.preloadOffset
@@ -68,7 +68,7 @@ struct InfiniteLoadModifier: ViewModifier {
             if shouldLoading {
                 headerLoadAttempts += 1
                 if headerLoadAttempts >= minTriggerCount {
-                    shouldLoading = false
+                    update.changeTrigger += 1
                     headerLoadAttempts = 0
                 }
             } else {
@@ -98,10 +98,8 @@ struct InfiniteLoadModifier: ViewModifier {
         if shouldLoading {
             footerLoadAttempts += 1
             if footerLoadAttempts > minTriggerCount {
-                shouldLoading = false
+                update.changeTrigger += 1
                 footerLoadAttempts = 0
-            } else {
-                shouldLoading = true
             }
         } else {
             footerLoadAttempts = minTriggerCount

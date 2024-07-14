@@ -32,5 +32,5 @@ extension EnvironmentValues {
 public struct InfiniteHeaderUpdateValueModel: Equatable {
     let enable: Bool
     var shouldLoading: Bool = false
-    var trigger: Bool = false
+    var changeTrigger: Int = 0
 }

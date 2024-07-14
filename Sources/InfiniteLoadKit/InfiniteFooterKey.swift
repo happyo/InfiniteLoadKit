@@ -32,4 +32,5 @@ extension EnvironmentValues {
 public struct InfiniteFooterUpdateValueModel: Equatable {
     let enable: Bool
     var shouldLoading: Bool = false
+    var changeTrigger: Int = 0
 }
