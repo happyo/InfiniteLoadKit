@@ -6,7 +6,7 @@ import SwiftUI
 
 struct InfiniteHeaderAnchorKey: PreferenceKey {
     static var defaultValue: [Item] = []
-    
+
     struct Item: Equatable {
         let preloadOffset: CGFloat
         let bounds: Anchor<CGRect>
@@ -15,9 +15,7 @@ struct InfiniteHeaderAnchorKey: PreferenceKey {
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
         let nextItems = nextValue()
-        if value != nextItems {
-            value = nextItems 
-        }
+        value = nextItems
     }
 }
 

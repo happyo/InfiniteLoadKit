@@ -6,8 +6,8 @@ import SwiftUI
 
 struct InfiniteFooterAnchorKey: PreferenceKey {
     static var defaultValue: [Item] = []
-    
-    struct Item:Equatable {
+
+    struct Item: Equatable {
         let bounds: Anchor<CGRect>
         let preloadOffset: CGFloat
         let isLoading: Bool
@@ -15,9 +15,7 @@ struct InfiniteFooterAnchorKey: PreferenceKey {
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
         let nextItems = nextValue()
-        if value != nextItems {
-            value = nextItems 
-        }
+        value = nextItems
     }
 }
 

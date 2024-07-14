@@ -80,7 +80,7 @@ struct ContentView: View {
                 .preload(offset: 300)
                 .noMore(noMoreNext)
             }
-            .enableInfiniteLoading(minTriggerCount: 5)
+            .enableInfiniteLoading(minTriggerCount: 10)
             .onChange(of: scrollPosition) { _, _ in
                 if let position = self.scrollPosition {
                     DispatchQueue.main.async {
