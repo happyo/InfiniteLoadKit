@@ -14,8 +14,7 @@ struct InfiniteFooterAnchorKey: PreferenceKey {
     }
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
-        let nextItems = nextValue()
-        value = nextItems
+        value.append(contentsOf: nextValue())
     }
 }
 
