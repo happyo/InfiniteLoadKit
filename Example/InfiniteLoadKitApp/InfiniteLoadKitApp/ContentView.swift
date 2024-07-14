@@ -23,35 +23,62 @@ struct ContentView: View {
 
     var body: some View {
         ScrollViewReader { scrollView in
-            ScrollView {
-                VStack {
-                    InfiniteHeader(isLoading: $headerLoading) {
-                        loadPre()
-                    } label: {
-                        ProgressView().frame(height: 100)
-                    } noMoreLabel: {
-                        Text("NoMore").frame(height: 30)
-                    }
-                    .preload(offset: 300)
-                    .noMore(noMorePre)
-
-                    ForEach(dataList, id: \.self) { index in
-                        Text("Item \(index)")
-                            .padding()
-                            .id(index)
-                    }
-                    
-                    InfiniteFooter(isLoading: $footerLoading) {
-                        loadMore()
-                    } label: {
-                        ProgressView().frame(height: 100)
-                    } noMoreLabel: {
-                        Text("NoMore").frame(height: 30)
-                    }
-                    .preload(offset: 300)
-                    .noMore(noMoreNext)
-
+//            ScrollView {
+//                VStack {
+//                    InfiniteHeader(isLoading: $headerLoading) {
+//                        loadPre()
+//                    } label: {
+//                        ProgressView().frame(height: 100)
+//                    } noMoreLabel: {
+//                        Text("NoMore").frame(height: 30)
+//                    }
+//                    .preload(offset: 300)
+//                    .noMore(noMorePre)
+//
+//                    ForEach(dataList, id: \.self) { index in
+//                        Text("Item \(index)")
+//                            .padding()
+//                            .id(index)
+//                    }
+//                    
+//                    InfiniteFooter(isLoading: $footerLoading) {
+//                        loadMore()
+//                    } label: {
+//                        ProgressView().frame(height: 100)
+//                    } noMoreLabel: {
+//                        Text("NoMore").frame(height: 30)
+//                    }
+//                    .preload(offset: 300)
+//                    .noMore(noMoreNext)
+//
+//                }
+//            }
+            List {
+                InfiniteHeader(isLoading: $headerLoading) {
+                    loadPre()
+                } label: {
+                    ProgressView().frame(height: 100)
+                } noMoreLabel: {
+                    Text("NoMore").frame(height: 30)
                 }
+                .preload(offset: 300)
+                .noMore(noMorePre)
+
+                ForEach(dataList, id: \.self) { index in
+                    Text("Item \(index)")
+                        .padding()
+                        .id(index)
+                }
+
+                InfiniteFooter(isLoading: $footerLoading) {
+                    loadMore()
+                } label: {
+                    ProgressView().frame(height: 100)
+                } noMoreLabel: {
+                    Text("NoMore").frame(height: 30)
+                }
+                .preload(offset: 300)
+                .noMore(noMoreNext)
             }
             .enableInfiniteLoading(minTriggerCount: 5)
             .onChange(of: scrollPosition) { _, _ in

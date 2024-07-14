@@ -9,3 +9,9 @@ extension ScrollView {
         modifier(InfiniteLoadModifier(enable: enable, minTriggerCount: minTriggerCount))
     }
 }
+
+extension List {
+    public func enableInfiniteLoading(enable: Bool = true, minTriggerCount: Int = 5) -> some View {
+        modifier(InfiniteLoadModifier(enable: enable, minTriggerCount: minTriggerCount))
+    }
+}
