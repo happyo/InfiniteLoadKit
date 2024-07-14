@@ -53,7 +53,7 @@ struct ContentView: View {
 
                 }
             }
-            .enableInfiniteLoading(minTriggerInterval: 0.3)
+            .enableInfiniteLoading(minTriggerCount: 5)
             .onChange(of: scrollPosition) { _, _ in
                 if let position = self.scrollPosition {
                     DispatchQueue.main.async {

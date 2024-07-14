@@ -6,7 +6,7 @@ import SwiftUI
 
 struct InfiniteLoadModifier: ViewModifier {
     let isEnable: Bool
-    let minTriggerInterval: TimeInterval
+    let minTriggerCount: Int
 
     @State private var headerUpdate: InfiniteHeaderUpdateKey.Value
     @State private var footerUpdate: InfiniteFooterUpdateKey.Value
@@ -14,13 +14,16 @@ struct InfiniteLoadModifier: ViewModifier {
     @State private var isHeaderLoading: Bool = false
     @State private var isFooterLoading: Bool = false
 
-    @State private var loadAttempts = 0 // 添加加载尝试次数计数器
+    @State private var headerLoadAttempts = 5
+    @State private var footerLoadAttempts = 5
 
-    init(enable: Bool, minTriggerInterval: TimeInterval = 0.3) {
+    init(enable: Bool, minTriggerCount: Int = 5) {
         self.isEnable = enable
-        self.minTriggerInterval = minTriggerInterval
+        self.minTriggerCount = minTriggerCount
         self._headerUpdate = State(initialValue: .init(enable: enable))
         self._footerUpdate = State(initialValue: .init(enable: enable))
+        self._headerLoadAttempts = State(initialValue: minTriggerCount)
+        self._footerLoadAttempts = State(initialValue: minTriggerCount)
     }
 
     func body(content: Content) -> some View {
@@ -58,18 +61,18 @@ struct InfiniteLoadModifier: ViewModifier {
         
         if minY > 0 {
             shouldLoading = false
-            loadAttempts = 10
+            headerLoadAttempts = minTriggerCount
         } else {
             shouldLoading = bounds.minY >= -item.preloadOffset
             
             if shouldLoading {
-                loadAttempts += 1
-                if loadAttempts > 9 {
+                headerLoadAttempts += 1
+                if headerLoadAttempts >= minTriggerCount {
                     shouldLoading = false
-                    loadAttempts = 0
+                    headerLoadAttempts = 0
                 }
             } else {
-                loadAttempts = 10
+                headerLoadAttempts = minTriggerCount
             }
         }
         
@@ -90,7 +93,19 @@ struct InfiniteLoadModifier: ViewModifier {
         
         var update = footerUpdate
         
-        let shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
+        var shouldLoading = proxy.size.height - bounds.minY + item.preloadOffset > 0
+        
+        if shouldLoading {
+            footerLoadAttempts += 1
+            if footerLoadAttempts > minTriggerCount {
+                shouldLoading = false
+                footerLoadAttempts = 0
+            } else {
+                shouldLoading = true
+            }
+        } else {
+            footerLoadAttempts = minTriggerCount
+        }
         
         update.shouldLoading = shouldLoading
         footerUpdate = update
