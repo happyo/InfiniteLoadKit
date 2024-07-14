@@ -14,7 +14,10 @@ struct InfiniteHeaderAnchorKey: PreferenceKey {
     }
 
     static func reduce(value: inout [Item], nextValue: () -> [Item]) {
-        value.append(contentsOf: nextValue())
+        let nextItems = nextValue()
+        if value != nextItems {
+            value = nextItems 
+        }
     }
 }
 
