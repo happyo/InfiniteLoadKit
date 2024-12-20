@@ -9,12 +9,10 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label: View, NoMore
     let label: () -> Label
     let noMoreLabel: () -> NoMoreLabel
     @Binding var isLoading: Bool
-    @Environment(\.infiniteFooterUpdate) var update
-    private var preloadOffset: CGFloat = 0
-    private var noMore: Bool = false
+    @Binding var noMore: Bool
 
     public init(
-        isLoading: Binding<Bool>, action: @escaping () -> Void,
+        isLoading: Binding<Bool>, noMoreNext: Binding<Bool>, action: @escaping () -> Void,
         @ViewBuilder label: @escaping () -> Label,
         @ViewBuilder noMoreLabel: @escaping () -> NoMoreLabel
     ) {
@@ -22,6 +20,7 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label: View, NoMore
         self.label = label
         self.noMoreLabel = noMoreLabel
         self._isLoading = isLoading
+        self._noMore = noMoreNext
     }
 
     public var body: some View {
@@ -31,35 +30,21 @@ public struct InfiniteFooter<Label, NoMoreLabel>: View where Label: View, NoMore
             } else if noMore {
                 noMoreLabel()
             } else {
-                Color.clear.frame(height: 1)
+                GeometryReader { geo in
+                    Color.clear
+                        .preference(key: InfiniteFooterAnchorKey.self, value: geo.frame(in: .named("InfiniteLoadSpace")).maxY)
+                }
+                .frame(height: 1)
             }
         }
         .frame(maxWidth: .infinity)
-        .anchorPreference(
-            key: InfiniteFooterAnchorKey.self, value: .bounds,
-            transform: { anchor in
-                [.init(bounds: anchor, preloadOffset: preloadOffset, isLoading: isLoading)]
-            }
-        )
-        .onChange(of: update) { _ in
-            if update.shouldLoading, !isLoading, !noMore {
+        .onAppear {
+            if !isLoading, !noMore {
                 DispatchQueue.main.async {
                     self.isLoading = true
                     self.action()
                 }
             }
         }
-    }
-
-    public func noMore(_ noMore: Bool) -> Self {
-        var view = self
-        view.noMore = noMore
-        return view
-    }
-
-    public func preload(offset: CGFloat) -> Self {
-        var view = self
-        view.preloadOffset = offset
-        return view
     }
 }

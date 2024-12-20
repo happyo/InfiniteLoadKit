@@ -9,12 +9,13 @@ public struct InfiniteHeader<Label, NoMoreLabel>: View where Label: View, NoMore
     let label: () -> Label
     let noMoreLabel: () -> NoMoreLabel
     @Binding var isLoading: Bool
+    @Binding var noMore: Bool
+
     @Environment(\.infiniteHeaderUpdate) var update
     private var preloadOffset: CGFloat = 0
-    private var noMore: Bool = false
 
     public init(
-        isLoading: Binding<Bool>, action: @escaping () -> Void,
+        isLoading: Binding<Bool>, noMorePre: Binding<Bool>, action: @escaping () -> Void,
         @ViewBuilder label: @escaping () -> Label,
         @ViewBuilder noMoreLabel: @escaping () -> NoMoreLabel
     ) {
@@ -22,6 +23,7 @@ public struct InfiniteHeader<Label, NoMoreLabel>: View where Label: View, NoMore
         self.label = label
         self.noMoreLabel = noMoreLabel
         self._isLoading = isLoading
+        self._noMore = noMorePre
     }
 
     public var body: some View {
@@ -31,35 +33,21 @@ public struct InfiniteHeader<Label, NoMoreLabel>: View where Label: View, NoMore
             } else if noMore {
                 noMoreLabel()
             } else {
-                Color.clear.frame(height: 1)
+                GeometryReader { geo in
+                    Color.clear
+                        .preference(key: InfiniteHeaderAnchorKey.self, value: geo.frame(in: .named("InfiniteLoadSpace")).maxY)
+                }
+                .frame(height: 1)
             }
         }
-        .frame(maxWidth: .infinity)
-        .anchorPreference(
-            key: InfiniteHeaderAnchorKey.self, value: .bounds,
-            transform: { anchor in
-                return [.init(preloadOffset: preloadOffset, bounds: anchor, isLoading: isLoading)]
-            }
-        )
-        .onChange(of: update) { _ in
-            if update.shouldLoading, !isLoading, !noMore {
+        .onAppear {
+            if !isLoading, !noMore {
                 DispatchQueue.main.async {
                     self.isLoading = true
                     self.action()
                 }
             }
         }
-    }
-
-    public func noMore(_ noMore: Bool) -> Self {
-        var view = self
-        view.noMore = noMore
-        return view
-    }
-
-    public func preload(offset: CGFloat) -> Self {
-        var view = self
-        view.preloadOffset = offset
-        return view
+        .frame(maxWidth: .infinity)
     }
 }

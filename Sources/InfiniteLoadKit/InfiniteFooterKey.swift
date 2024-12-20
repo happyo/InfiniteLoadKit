@@ -5,16 +5,9 @@
 import SwiftUI
 
 struct InfiniteFooterAnchorKey: PreferenceKey {
-    static var defaultValue: [Item] = []
-
-    struct Item: Equatable {
-        let bounds: Anchor<CGRect>
-        let preloadOffset: CGFloat
-        let isLoading: Bool
-    }
-
-    static func reduce(value: inout [Item], nextValue: () -> [Item]) {
-        value.append(contentsOf: nextValue())
+    static var defaultValue: CGFloat = .infinity
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 

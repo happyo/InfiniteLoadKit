@@ -22,47 +22,15 @@ struct ContentView: View {
     @State private var dataList: [Int] = Array(1...20)
 
     var body: some View {
-        ScrollViewReader { scrollView in
-//            ScrollView {
-//                VStack {
-//                    InfiniteHeader(isLoading: $headerLoading) {
-//                        loadPre()
-//                    } label: {
-//                        ProgressView().frame(height: 100)
-//                    } noMoreLabel: {
-//                        Text("NoMore").frame(height: 30)
-//                    }
-//                    .preload(offset: 300)
-//                    .noMore(noMorePre)
-//
-//                    ForEach(dataList, id: \.self) { index in
-//                        Text("Item \(index)")
-//                            .padding()
-//                            .id(index)
-//                    }
-//                    
-//                    InfiniteFooter(isLoading: $footerLoading) {
-//                        loadMore()
-//                    } label: {
-//                        ProgressView().frame(height: 100)
-//                    } noMoreLabel: {
-//                        Text("NoMore").frame(height: 30)
-//                    }
-//                    .preload(offset: 300)
-//                    .noMore(noMoreNext)
-//
-//                }
-//            }
-            List {
-                InfiniteHeader(isLoading: $headerLoading) {
+        ScrollView {
+            LazyVStack {
+                InfiniteHeader(isLoading: $headerLoading, noMorePre: $noMorePre) {
                     loadPre()
                 } label: {
                     ProgressView().frame(height: 100)
                 } noMoreLabel: {
                     Text("NoMore").frame(height: 30)
                 }
-                .preload(offset: 300)
-                .noMore(noMorePre)
 
                 ForEach(dataList, id: \.self) { index in
                     Text("Item \(index)")
@@ -70,28 +38,18 @@ struct ContentView: View {
                         .id(index)
                 }
 
-                InfiniteFooter(isLoading: $footerLoading) {
+                InfiniteFooter(isLoading: $footerLoading, noMoreNext: $noMoreNext) {
                     loadMore()
                 } label: {
                     ProgressView().frame(height: 100)
                 } noMoreLabel: {
                     Text("NoMore").frame(height: 30)
                 }
-                .preload(offset: 300)
-                .noMore(noMoreNext)
             }
-            .enableInfiniteLoading(minTriggerCount: 10)
-            .onChange(of: scrollPosition) { _, _ in
-                if let position = self.scrollPosition {
-                    DispatchQueue.main.async {
-                        scrollView.scrollTo(position, anchor: .top)
-                        print(position)
-                        self.scrollPosition = nil
-                    }
-
-                }
-            }
+            
         }
+        .enableInfiniteLoading()
+        .scrollPosition(id: $scrollPosition, anchor: .top)
     }
     
     private func loadPre() {
@@ -108,19 +66,16 @@ struct ContentView: View {
                 if f < -100 {
                     noMorePre = true
                 }
+                
+                scrollPosition = f
                 let preList = Array(f-20..<f)
                 self.dataList.insert(contentsOf: preList, at: 0)
                 
                 self.isLoadingData = false
                 self.headerLoading = false
-                print("end pre action")
-                DispatchQueue.main.async {
-                    scrollPosition = f
-                }
-
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: item)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: item)
     }
     
     private func loadMore() {
@@ -132,7 +87,6 @@ struct ContentView: View {
                 if last >= 100 {
                     noMoreNext = true
                 }
-                scrollPosition = nil
                 let nextList = Array(last+1...last+20)
                 self.dataList.append(contentsOf: nextList)
             }

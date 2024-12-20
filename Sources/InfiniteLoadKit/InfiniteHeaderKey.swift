@@ -5,16 +5,9 @@
 import SwiftUI
 
 struct InfiniteHeaderAnchorKey: PreferenceKey {
-    static var defaultValue: [Item] = []
-
-    struct Item: Equatable {
-        let preloadOffset: CGFloat
-        let bounds: Anchor<CGRect>
-        let isLoading: Bool
-    }
-
-    static func reduce(value: inout [Item], nextValue: () -> [Item]) {
-        value.append(contentsOf: nextValue())
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 
@@ -32,5 +25,4 @@ extension EnvironmentValues {
 public struct InfiniteHeaderUpdateValueModel: Equatable {
     let enable: Bool
     var shouldLoading: Bool = false
-    var changeTrigger: Int = 0
 }
